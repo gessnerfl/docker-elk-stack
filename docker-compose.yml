@@ -4,11 +4,15 @@ services:
   elasticsearch:
     image: elasticsearch:2
     container_name: elasticsearch
+    # This hack for the command is needed so that the docker container is able to write the data to the local volume
+    command: /bin/bash -c 'usermod -u 1000 elasticsearch; gosu elasticsearch elasticsearch'
     networks:
       - devnet
     ports:
       - 9200:9200
       - 9300:9300
+    volumes:
+      - /Users/gessnerfl/git/devops/docker/elk-stack/esdata:/usr/share/elasticsearch/data
   kibana:
     image: kibana
     container_name: kibana
