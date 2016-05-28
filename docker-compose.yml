@@ -1,0 +1,37 @@
+version: '2'
+
+services:
+  elasticsearch:
+    image: elasticsearch:2
+    container_name: elasticsearch
+    networks:
+      - devnet
+    ports:
+      - 9200:9200
+      - 9300:9300
+  kibana:
+    image: kibana
+    container_name: kibana
+    networks:
+      - devnet
+    ports:
+      - 5601:5601
+    links:
+      - elasticsearch:elasticsearch
+  logstash:
+    image: logstash:2
+    container_name: logstash
+    command: logstash -f /etc/logstash/logstash.conf
+    networks:
+      - devnet
+    ports:
+      - 10514:10514
+      - 10514:10514/udp
+    volumes:
+      - /Users/gessnerfl/git/devops/docker/elk-stack/config:/etc/logstash
+    links:
+      - elasticsearch:elasticsearch
+
+networks:
+  devnet:
+    external: true
